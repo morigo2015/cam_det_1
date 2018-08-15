@@ -82,4 +82,4 @@ if __name__ == '__main__':
         tm.set('label_3')
         for j in range(300): timeload()
 
-    print('results:\n{}'.format(tm.results()))
+    print('\nresults:\n{}'.format(tm.results()))
