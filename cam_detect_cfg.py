@@ -1,5 +1,7 @@
 # cam_detec_config
 
+# new line test
+
 import cv2
 
 cfg = {
