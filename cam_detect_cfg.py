@@ -6,7 +6,7 @@ cfg = {
      'show_output_frames'   : True ,  # show output frames on screen (imshow(...)
 
     #'input_source'         : 0 ,
-    #'input_source'         : 'videos/room-hardfaces-test.avi' ,
+    #'input_source'         : 'production/videos/room-faces.avi' ,
     #'input_source'         : 'rtsp://admin:F1123581321f@192.168.1.64:554/Streaming/Channels/101' ,  # hik cam
     'input_source'          : 'rtsp://admin:F112358f@192.168.1.165:554/Streaming/Channels/101' ,  # door bell
 
@@ -23,7 +23,7 @@ cfg = {
     'boxed_file_name'       : 'production/videos/boxed.avi' ,
     'boxed_file_fps'        : 20 ,
 
-    'save_faced_frames'     : False,  # to save in videofile boxed frames
+    'save_faced_frames'     : True,  # to save in videofile boxed frames
     'faced_file_name'       : 'production/videos/faced.avi' ,
     'faced_file_fps'        : 10 ,
 
@@ -32,7 +32,7 @@ cfg = {
 
     'pers_det_prototxt'     : 'production/models/MobileNetSSD_deploy.prototxt.txt' ,
     'pers_det_model'        : 'production/models/MobileNetSSD_deploy.caffemodel' ,
-    'pers_det_confidence'   : 0.2 , # confidence threshold
+    'pers_det_confidence'   : 0.4 , # confidence threshold
     'pers_box_width_range'   : (30, 1200),  # (min,max) range for persbox width
     'pers_box_height_range'  : (30, 700),  # (min,max) range for persbox height
     'pers_box_wh_ratio_range': (0.25, 1./0.25),  # (min,max) range for persbox width/height
@@ -50,22 +50,23 @@ cfg = {
     'face_box_wh_ratio_range':  (0.75,1./0.75) , # (min,max) range for facebox width/height
 
     'face_rec_use_threshold': True, # if distance to nearest neighbor < Threshold: label="Unknown"
+    'face_rec_threshold'    : -1 , # -1: calculate threshold on encodings; else: the value is (manually set) threshold
 
     'filter_needed'         : True ,# check pers_box,obj_box for wh_range; check for face_box that outer pers_box exists
     'time_measure_needed'   : True ,# time measure in main loop of cam_detect
 
     'clips_fname_prefix'    : 'production/videos/clip_' ,
     'clips_fname_suffix'    : '.avi' ,
-    'clips_include_boxes'   : False,  # include pers box (green) in clip
+    'clips_labelled_prefix' : 'production/videos/' ,
+    'clips_include_boxes'   : True,  # include pers box (green) in clip
     'clips_prev_frames'             : 10 , # how many previous frames include in the begin of clip
-    'clips_noperson_frames_to_stop' : 30 , # how many frames without person are allowed to not stop clip
-    'clips_frames_to_appear'        : 15 , # how many frames with person to announce 'appear' event (once per clip)
+    'clips_noperson_frames_to_stop' : 25 , # how many frames without person are allowed to not stop clip
+    'clips_frames_to_appear'        : 30 , # how many frames in clip to allow announce 'appear' event (once per clip)
     'clips_fps'                     : 10 ,
 
     'event_send_message'        : True , # send telegram msg
     'event_image_folder'        : 'production/event_images' ,
     'event_image_ext'           : '.jpg' ,
-    'event_nomsg_interval'      : 5 ,  # second after last "appeared" event till new event
 
     'face_labels_list'          : ['Yulka', 'Yehor', 'Olka', 'Igor', 'Ded'] ,
 

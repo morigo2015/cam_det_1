@@ -4,38 +4,33 @@
 # 1) compare different recognizers
 # 2) find labels which are hard for current recognizer
 
-import numpy as np
-import cv2
-import pickle
 import os
-import glob
 
-import face_recognition
-
-from cam_boxes import ObjBox, BGR_WHITE,BGR_GREEN,BGR_RED
-from time_measure import  TimeMeasure
-from cam_dnn import PersDetector, FaceDetector, FaceRecognizer, ImageScanner
+import cv2
+from cam_boxes import BGR_RED
 from cam_detect_cfg import cfg
+from cam_dnn import ImageScanner
+from util_time_measure import TimeMeasure
 
-#cfg['face_labels_list'] = ['Olka']
+
+# cfg['face_labels_list'] = ['Olka']
 
 def main():
-
     tm = TimeMeasure()
-    image_scanner = ImageScanner(time_meter=tm,filter=True,recognizer_method='knn_new')
+    image_scanner = ImageScanner(time_meter=tm, filter_flg=True, recognizer_method='knn_new')
 
-    test_folder = 'face_dataset/' # cfg['test_images_folder']
+    test_folder = 'face_dataset/'  # cfg['test_images_folder']
     result_prefix = "_analyzed/"
     result_cnt = {}
-    result_opts = ['not_found','multifaces','ok','bad','bad/total']
+    result_opts = ['not_found', 'multifaces', 'ok', 'bad', 'bad/total']
 
     for label in cfg['face_labels_list']:
         label_folder = test_folder + label + '/'
-        result_cnt[label]={}
+        result_cnt[label] = {}
         for r in result_opts:
-            result_cnt[label][r]=0
+            result_cnt[label][r] = 0
         if not os.path.exists(label_folder):
-            print( f"no samples for label '{label}'")
+            print(f"no samples for label '{label}'")
             continue  # skip labels which have no samples
 
         for img_fname in os.listdir(label_folder):
@@ -43,17 +38,17 @@ def main():
 
             image = cv2.imread(path_to_image)
 
-            pers_boxes,face_boxes = image_scanner.scan(image)
+            pers_boxes, face_boxes = image_scanner.scan(image)
 
-            if len(face_boxes)==0:
+            if len(face_boxes) == 0:
                 result = 'not_found'
-                result_folder = test_folder+result_prefix+"_not_found/"
+                result_folder = test_folder + result_prefix + "_not_found/"
 
-            else: # len(facedet_boxes) 1 or more:
+            else:  # len(facedet_boxes) 1 or more:
                 for face_box in face_boxes:
                     face_box.draw(image, color=BGR_RED)
 
-                if len(face_boxes)==1:
+                if len(face_boxes) == 1:
                     face_box = face_boxes[0]
 
                     file_label = img_fname.split(sep='_')[0]
@@ -63,18 +58,18 @@ def main():
                         result = 'bad'
                     result_folder = test_folder + result_prefix + face_box.label + '/'
 
-                else: # len(face_boxes) > 1
+                else:  # len(face_boxes) > 1
                     result = 'multifaces'
                     result_folder = test_folder + result_prefix + "_multifaces/"
 
             os.makedirs(result_folder, exist_ok=True)
-            cv2.imwrite(result_folder+img_fname,image)
+            cv2.imwrite(result_folder + img_fname, image)
             print(f"result={result:12}   {img_fname}: {label_folder} ---> {result_folder}")
-            result_cnt[label][result] +=1
+            result_cnt[label][result] += 1
 
     print('\n\n', tm.results())
 
-    total=print_double_dictionary(result_cnt,result_opts)
+    total = print_double_dictionary(result_cnt, result_opts)
 
     print(f"\n{' ':12}bad/(ok+bad)")
     for label in cfg['face_labels_list']:
@@ -85,7 +80,7 @@ def main():
     print(f"{'Total':12}: {bt_ratio*100:>6.2f}%")
 
 
-def print_double_dictionary(dic,opts):
+def print_double_dictionary(dic, opts):
     """
     print table which is double dictionary: each row has unique label and columns opt1, opt2, ..., optn
     :param dic:
@@ -93,14 +88,14 @@ def print_double_dictionary(dic,opts):
     :return:
     """
 
-    total={}
-    for r in opts+['sum']: total[r]=0
+    total = {}
+    for r in opts + ['sum']: total[r] = 0
 
     # 1. Print header
 
     print(f"{'':12s} ", end='')
-    for r in opts+['sum']:
-        print(f"{r:>11s} ",end='')
+    for r in opts + ['sum']:
+        print(f"{r:>11s} ", end='')
     print(' ')
 
     # 2. Print body
@@ -109,21 +104,22 @@ def print_double_dictionary(dic,opts):
         print(f"{lbl:12s} ", end='')
         for r in opts:
             print(f"{dic[lbl][r]:11} ", end='')
-        dic[lbl]['sum'] = sum([ dic[lbl][r] for r in opts ])
+        dic[lbl]['sum'] = sum([dic[lbl][r] for r in opts])
         print(f"{dic[lbl]['sum']:11}")
 
     # 3. Print footer
     # calc totals
     for lbl in cfg['face_labels_list']:
-        for r in opts+['sum']:
-            total[r]+=dic[lbl][r]
+        for r in opts + ['sum']:
+            total[r] += dic[lbl][r]
     # print totals
     print(f"{'Total:':12s} ", end='')
-    for r in opts+['sum']:
+    for r in opts + ['sum']:
         print(f"{total[r]:11} ", end='')
     print(' ')
 
     return total
+
 
 if __name__ == '__main__':
     main()

@@ -1,20 +1,15 @@
 # add facedet confidence to the name of clip (to sort by conf)
 # allow * in input clip names
 
-import cv2
-import datetime
-import os
 import glob
+import os
 
 from cam_detect_cfg import cfg
-from cam_io         import InputStream, OutputStream, UserStream
-from cam_dnn        import PersDetector, FaceDetector #, FaceRecognizer
-from cam_event      import EventManager
-from cam_clips      import ClipManager
+from cam_dnn import FaceDetector  # , FaceRecognizer
+from cam_io import InputStream, UserStream
 
 
 def main():
-
     user_stream = UserStream()
     face_detector = FaceDetector()
 
@@ -35,13 +30,13 @@ def main():
 
             for fb in face_boxes:
                 confidence = fb.confidence
-                max_confidence = max(max_confidence,confidence)
+                max_confidence = max(max_confidence, confidence)
 
         del inp_stream
 
-        new_fname = '_{:4f}_{}'.format(max_confidence,clip_fname)
-        os.rename(clip_fname,new_fname)
-        print('Rename {} ----> {}'.format(clip_fname,new_fname))
+        new_fname = '_{:4f}_{}'.format(max_confidence, clip_fname)
+        os.rename(clip_fname, new_fname)
+        print('Rename {} ----> {}'.format(clip_fname, new_fname))
 
 
 if __name__ == '__main__':

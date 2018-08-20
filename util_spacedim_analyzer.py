@@ -2,21 +2,14 @@
 # build Centroid, MaxRadius for each label
 # build (label*label) tables: Distance between Centroids (DC); DC-(RmaxI+RmaxJ)
 
-import os
 import pickle
-import numpy as np
 
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import LabelEncoder
-from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
-
-from sklearn.decomposition import PCA
-
-from cam_boxes import ObjBox, BGR_WHITE,BGR_GREEN,BGR_RED
-from time_measure import  TimeMeasure
-from cam_dnn import PersDetector, FaceDetector, FaceRecognizer, ImageScanner
+import numpy as np
 from cam_detect_cfg import cfg
+from sklearn.cluster import KMeans
+from sklearn.manifold import TSNE
+from sklearn.preprocessing import LabelEncoder
 
 
 class DimSpaceAnalyzer:
