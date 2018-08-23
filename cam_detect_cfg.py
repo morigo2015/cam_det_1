@@ -25,7 +25,7 @@ cfg = {
 
     'save_faced_frames'     : True,  # to save in videofile boxed frames
     'faced_file_name'       : 'production/videos/faced.avi' ,
-    'faced_file_fps'        : 10 ,
+    'faced_file_fps'        : 5 ,
 
     'obj_box_color'         : (0, 255, 0) , # greem
     'face_box_color'        : (0, 0, 255) , # red
@@ -52,7 +52,7 @@ cfg = {
     'face_rec_use_threshold': True, # if distance to nearest neighbor < Threshold: label="Unknown"
     'face_rec_threshold'    : -1 , # -1: calculate threshold on encodings; else: the value is (manually set) threshold
 
-    'filter_needed'         : True ,# check pers_box,obj_box for wh_range; check for face_box that outer pers_box exists
+    'filter_needed'         : False ,# check pers_box,obj_box for wh_range; check for face_box that outer pers_box exists
     'time_measure_needed'   : True ,# time measure in main loop of cam_detect
 
     'clips_fname_prefix'    : 'production/videos/clip_' ,
