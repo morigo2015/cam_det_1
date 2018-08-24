@@ -139,3 +139,37 @@ class Log:
         print(msg_str)
         Log.file_handle.write(msg_str)
         Log.file_handle.flush()
+
+# -------------------------------------------------------------------------------------------------
+
+import sys
+
+cfg['frame_cnt_divider_to_inform'] = 10
+
+def store_input_stream():
+    """
+    store input stream into file
+    no user GUI. Finish at the end of input stream of Ctrl-C
+    all related parameters - from cfg file
+    """
+    print('Store input stream utility.)')
+    print(f'Python interpreter:{sys.executable} OpenCV version:{cv2.__version__}')
+    inp_stream = InputStream()
+    outp_stream = OutputStream(cfg['out_file_name'], inp_stream.frame_shape, cfg['out_file_fps'],mode='save_old')
+    while True:
+
+        inp_frame = inp_stream.read_frame()
+        if inp_frame is None:
+            print(f'input steam closed')
+            break
+
+        try: frame_cnt += 1
+        except: frame_cnt=0
+        if frame_cnt % cfg['frame_cnt_divider_to_inform'] ==0:
+            print(f'frame counter = {frame_cnt}')
+
+        outp_stream.write_frame(inp_frame)
+
+    print(f'total frames saved: {frame_cnt}')
+if __name__ == '__main__':
+    store_input_stream()
