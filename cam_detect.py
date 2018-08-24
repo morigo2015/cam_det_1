@@ -9,17 +9,20 @@ import subprocess
 
 from cam_detect_cfg import cfg
 from cam_io import InputStream, OutputStream, UserStream
-from cam_dnn import PersDetector, FaceDetector, FaceRecognizer
 from cam_clips import ClipManager
 from util_time_measure import TimeMeasure
 from cam_boxes import BGR_RED  # BGR_WHITE, BGR_GREEN,
 
+from cam_dnn_pers import PersDetector
+if cfg['face_needed']:
+    from cam_dnn_faces import FaceDetector, FaceRecognizer
+
 
 def main():
-    print('Python interpreter:{}     OpenCV version:{}'.format(sys.executable, cv2.__version__))
+    print(f'Python interpreter:{sys.executable}     OpenCV version:{cv2.__version__}')
 
     pers_detector = PersDetector()
-    if cfg['face_det_needed'] is True:
+    if cfg['face_needed'] is True:
         face_detector = FaceDetector()
         face_recognizer = FaceRecognizer()
 
@@ -56,7 +59,7 @@ def main():
         for pers_box in pers_boxes:
             pers_box.draw(outp_frame, color=cfg['obj_box_color'])
 
-        if cfg['face_det_needed'] is True:
+        if cfg['face_needed'] is True:
 
             time_meter.set('face detect & recognize')
 

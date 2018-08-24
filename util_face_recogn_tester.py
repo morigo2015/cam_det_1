@@ -9,7 +9,7 @@ import os
 import cv2
 from cam_boxes import BGR_RED
 from cam_detect_cfg import cfg
-from cam_dnn import ImageScanner
+from cam_dnn_pers import ImageScanner
 from util_time_measure import TimeMeasure
 
 

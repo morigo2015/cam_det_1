@@ -7,7 +7,7 @@ import os
 import cv2
 from cam_boxes import BGR_RED, BGR_GREEN
 from cam_detect_cfg import cfg
-from cam_dnn import PersDetector, FaceDetector  # , FaceRecognizer
+from cam_dnn_pers import PersDetector, FaceDetector  # , FaceRecognizer
 from cam_io import InputStream, UserStream
 from util_time_measure import TimeMeasure
 

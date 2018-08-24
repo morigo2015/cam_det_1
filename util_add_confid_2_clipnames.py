@@ -5,7 +5,7 @@ import glob
 import os
 
 from cam_detect_cfg import cfg
-from cam_dnn import FaceDetector  # , FaceRecognizer
+from cam_dnn_pers import FaceDetector  # , FaceRecognizer
 from cam_io import InputStream, UserStream
 
 

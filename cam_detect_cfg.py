@@ -5,10 +5,10 @@ import cv2
 cfg = {
      'show_output_frames'   : True ,  # show output frames on screen (imshow(...)
 
-    #'input_source'         : 0 ,
+    'input_source'         : 0 ,
     #'input_source'         : 'production/videos/room-faces.avi' ,
     #'input_source'         : 'rtsp://admin:F1123581321f@192.168.1.64:554/Streaming/Channels/101' ,  # hik cam
-    'input_source'          : 'rtsp://admin:F112358f@192.168.1.165:554/Streaming/Channels/101' ,  # door bell
+    #'input_source'          : 'rtsp://admin:F112358f@192.168.1.165:554/Streaming/Channels/101' ,  # door bell
 
     'input_recapture_max'   : 1000 ,     # max attempts to reopen cv2.VideoCapture
     'input_reread_max'      : 1000 ,   # max attempts to reread frame after reopen VideoCapture
@@ -40,8 +40,8 @@ cfg = {
     'facedataset_folder'    : 'production/face_dataset/',
     'encodings_file'        : 'production/face_dataset/face_encodings.pkl',
 
-    'face_det_needed'       : True ,
-    #'face_det_needed'       : False ,
+    #'face_needed'           : True , # include face processing: detection,encoding,classification
+    'face_needed'       : False ,
     'face_det_prototxt'     : 'production/models/face_deploy.prototxt.txt' ,
     'face_det_model'        : 'production/models/face_res10_300x300_ssd_iter_140000.caffemodel' ,
     'face_det_confidence'   : 0.2 ,  # confidence threshold
