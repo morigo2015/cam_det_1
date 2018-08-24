@@ -42,66 +42,70 @@ def main():
     clip_mgr = ClipManager()
     time_meter = TimeMeasure(measure_needed=cfg['time_measure_needed'])
 
-    while user_stream.wait_key() is True:
-        inp_frame = inp_stream.read_frame()
+    try:
+        while user_stream.wait_key() is True:
+            inp_frame = inp_stream.read_frame()
 
-        if inp_frame is None:
-            event_type, event_img_fname, event_clip_fname, event_msg = clip_mgr.process_eof()
+            if inp_frame is None:
+                event_type, event_img_fname, event_clip_fname, event_msg = clip_mgr.process_eof()
+                if cfg['event_send_message'] and event_type != 'nothing':
+                    send_message(event_type, event_img_fname, event_clip_fname, event_msg)
+                break
+
+            outp_frame = inp_frame.copy()
+
+            # object detection
+            time_meter.set('pers detector')
+            pers_boxes = pers_detector.detect(inp_frame)  # list of boxes with persons
+            for pers_box in pers_boxes:
+                pers_box.draw(outp_frame, color=cfg['obj_box_color'])
+
+            if cfg['face_needed'] is True:
+
+                time_meter.set('face detect & recognize')
+
+                # face detection
+                facedet_boxes = face_detector.detect(inp_frame)
+
+                # face recognition
+                boxes = [fd_box.box.sides() for fd_box in facedet_boxes]
+                face_boxes = face_recognizer.recognize(inp_frame, boxes)
+
+                # filtering some of false-positive faces
+                if cfg['filter_needed']:
+                    # remove boxes which are not fitting into limits for w,h
+                    pers_boxes = [fb for fb in pers_boxes if fb.w_h_is_in_pers_range()]
+                    # remove boxes which are not fitting into limits for w,h
+                    face_boxes = [fb for fb in face_boxes if fb.w_h_is_in_face_range()]
+                    # remove faces which are not inside of at least one pers_box
+                    face_boxes = [fb for fb in face_boxes if fb.is_inside_obj_boxes(pers_boxes)]
+
+                    for face_box in face_boxes:
+                        face_box.draw(outp_frame, color=BGR_RED)
+
+            else:  # no face detection/recognition
+                face_boxes = []
+
+            # event management
+            time_meter.set(' processing ')
+            event_type, event_img_fname, event_clip_fname, event_msg = \
+                clip_mgr.process_next_frame(inp_frame, outp_frame, pers_boxes, face_boxes)
+
             if cfg['event_send_message'] and event_type != 'nothing':
                 send_message(event_type, event_img_fname, event_clip_fname, event_msg)
-            break
 
-        outp_frame = inp_frame.copy()
+            # write outp_frame into related streams, based on cfg
+            if len(pers_boxes) > 0 and cfg['save_boxed_frames'] is True:
+                boxed_stream.write_frame(outp_frame)
+            if len(face_boxes) > 0 and cfg['save_faced_frames'] is True:
+                faced_stream.write_frame(outp_frame)
+            if cfg['show_output_frames'] is True:
+                user_stream.show('output frame', outp_frame)
+            if cfg['save_output_frames'] is True:
+                outp_stream.write_frame(outp_frame)
 
-        # object detection
-        time_meter.set('pers detector')
-        pers_boxes = pers_detector.detect(inp_frame)  # list of boxes with persons
-        for pers_box in pers_boxes:
-            pers_box.draw(outp_frame, color=cfg['obj_box_color'])
-
-        if cfg['face_needed'] is True:
-
-            time_meter.set('face detect & recognize')
-
-            # face detection
-            facedet_boxes = face_detector.detect(inp_frame)
-
-            # face recognition
-            boxes = [fd_box.box.sides() for fd_box in facedet_boxes]
-            face_boxes = face_recognizer.recognize(inp_frame, boxes)
-
-            # filtering some of false-positive faces
-            if cfg['filter_needed']:
-                # remove boxes which are not fitting into limits for w,h
-                pers_boxes = [fb for fb in pers_boxes if fb.w_h_is_in_pers_range()]
-                # remove boxes which are not fitting into limits for w,h
-                face_boxes = [fb for fb in face_boxes if fb.w_h_is_in_face_range()]
-                # remove faces which are not inside of at least one pers_box
-                face_boxes = [fb for fb in face_boxes if fb.is_inside_obj_boxes(pers_boxes)]
-
-                for face_box in face_boxes:
-                    face_box.draw(outp_frame, color=BGR_RED)
-
-        else:  # no face detection/recognition
-            face_boxes = []
-
-        # event management
-        time_meter.set(' processing ')
-        event_type, event_img_fname, event_clip_fname, event_msg = \
-            clip_mgr.process_next_frame(inp_frame, outp_frame, pers_boxes, face_boxes)
-
-        if cfg['event_send_message'] and event_type != 'nothing':
-            send_message(event_type, event_img_fname, event_clip_fname, event_msg)
-
-        # write outp_frame into related streams, based on cfg
-        if len(pers_boxes) > 0 and cfg['save_boxed_frames'] is True:
-            boxed_stream.write_frame(outp_frame)
-        if len(face_boxes) > 0 and cfg['save_faced_frames'] is True:
-            faced_stream.write_frame(outp_frame)
-        if cfg['show_output_frames'] is True:
-            user_stream.show('output frame', outp_frame)
-        if cfg['save_output_frames'] is True:
-            outp_stream.write_frame(outp_frame)
+    except KeyboardInterrupt:
+        print('cancelled by user')
 
     # finish:
     print('\n\n', time_meter.results())
