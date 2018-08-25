@@ -2,20 +2,24 @@
 
 import cv2
 
+proj_root = '/home/im/mypy/cam_detect/'
+
 _folders = {
-    'video'        : 'production/videos/' ,
-    'models'       : 'production/models/' ,
-    'face_dataset' : 'production/face_dataset/' ,
-    'event_images' : 'production/event_images/'
+    'video'        : proj_root + 'production/videos/' ,
+    'models'       : proj_root + 'production/models/' ,
+    'face_dataset' : proj_root + 'production/face_dataset/' ,
+    'event_images' : proj_root + 'production/event_images/'
 }
 
 cfg = {
      'show_output_frames'   : True ,  # show output frames on screen (imshow(...)
 
-    'input_source'         : 0 ,
-    #'input_source'         : 'production/videos/room-faces.avi' ,
-    #'input_source'         : 'rtsp://admin:F1123581321f@192.168.1.64:554/Streaming/Channels/101' ,  # hik cam
-    #'input_source'          : 'rtsp://admin:F112358f@192.168.1.165:554/Streaming/Channels/101' ,  # door bell
+    #'input_source'         : 0 ,
+    #'input_source'          : _folders['video']+'room-faces.avi' ,
+    'input_source'         : 'rtsp://admin:F1123581321f@192.168.1.64:554/Streaming/Channels/101' ,  # hik cam
+    #'input_source'         : 'rtsp://admin:F112358f@192.168.1.165:554/Streaming/Channels/101' ,  # door bell
+    #'input_source'         : 'rtsp://admin:F1123581321f@194.31.46.247:8554/Streaming/Channels/101' ,  # hik cam - remote
+    #'input_source'         : 'rtsp://admin:F112358f@194.31.46.247:9554/Streaming/Channels/101' ,  # door bell - remote
 
     'input_recapture_max'   : 1000 ,     # max attempts to reopen cv2.VideoCapture
     'input_reread_max'      : 1000 ,   # max attempts to reread frame after reopen VideoCapture
