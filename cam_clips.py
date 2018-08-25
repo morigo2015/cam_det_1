@@ -13,9 +13,10 @@
 import subprocess
 from collections import deque
 import cv2
-from cam_io import InputStream, OutputStream, UserStream
 import datetime
+import os
 
+from cam_io import InputStream, OutputStream, UserStream
 from cam_detect_cfg import cfg
 
 
@@ -189,6 +190,7 @@ class _BestPersInfo:
                 continue
 
     def best_pers_image_fname(self):
+        os.makedirs(cfg['event_image_folder'],exist_ok=True)
         fname = f"{cfg['event_image_folder']}/{datetime.datetime.now()}{cfg['event_image_ext']}"
         cv2.imwrite(fname, self.best_image)
         return fname
@@ -244,6 +246,7 @@ class _BestFacesInfo:
         """
         return name of file with saved image of best image in the clip. Best means - best (shortest) face distance.
         """
+        os.makedirs(cfg['event_image_folder'],exist_ok=True)
         fname = f"{cfg['event_image_folder']}/{datetime.datetime.now()}{cfg['event_image_ext']}"
         cv2.imwrite(fname, self.best_image)
         return fname
