@@ -1,5 +1,9 @@
 # colors
-
+"""
+names for basic colors; 
+COLORS[] - list of color codes, ordered to not merge so that neighboring colors are not merging
+COLOR_NAMES[] - list of color names;
+"""
 BGR_BLACK = (0,0,0)
 BGR_RED = (0,0,255)
 BGR_GREEN = (0,255,0)
